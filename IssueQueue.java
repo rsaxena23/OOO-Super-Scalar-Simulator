@@ -1,13 +1,20 @@
+import java.util.ArrayList;
+import java.util.PriorityQueue;
+
 class IQEntry
 {
-
+	boolean src1Rdy;
+	boolean src2Rdy;
+	Instruction instruction;
 }
 
 public class IssueQueue
 {
-	IQEntry entries[];
+	ArrayList<IQEntry> entries;
+	int maxSize;
 	public IssueQueue(int size)
 	{
-		entries = new IQEntry[size];
+		this.entries = new ArrayList<IQEntry>();
+		this.maxSize = size;
 	}
 }
