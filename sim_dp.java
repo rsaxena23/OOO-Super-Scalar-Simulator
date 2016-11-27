@@ -1,37 +1,10 @@
-import java.io.FileReader;
-import java.io.BufferedReader;
-import java.io.IOException;
-
-
 /*
 SuperScalar, IQ, Rob
 
 */
 
-
-
-
 public class sim_dp
 {
-		public void startSimulation(SuperScalar superScalar, String traceFile)
-		{
-			try
-			{
-				BufferedReader br = new BufferedReader( new FileReader(traceFile));
-				String line;
-				while((line = br.readLine())!=null)
-				{
-
-				}
-			}catch(Exception e)
-			{
-				System.out.println("Problem:"+e.getMessage());
-				e.printStackTrace();
-			}
-
-		}
-
-
 		public static void main(String args[])
 		{
 			int robSize, iqSize, width, cacheSize,p;
@@ -51,7 +24,7 @@ public class sim_dp
 			traceFile = args[5];
 			
 			SuperScalar superScalar = new SuperScalar(width, robSize, iqSize);
-			new sim_dp().startSimulation(superScalar,traceFile);
+			new Simulator(superScalar,traceFile).startSimulation();
 			
 		}
 }

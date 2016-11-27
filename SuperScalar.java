@@ -18,13 +18,51 @@ class SuperScalar
 		this.width = width;
 		this.iq = new IssueQueue(iqSize);
 		this.rob = new Rob(robSize);
-		renameTable = new HashMap();
-		de = new Instruction[width];
-		rn = new Instruction[width];
-		rr = new Instruction[width];
-		di = new Instruction[width];
-		ex = new Instruction[width][5];
-		wb = new Instruction[width][5];
-		rt = new Instruction[width];
+		renameTable = new HashMap();		
+	}
+
+	public boolean fetch(ArrayList<Instruction> bundle)
+	{
+		return false;
+	}
+
+	public boolean decode()
+	{
+		return false;
+	}
+
+	public boolean rename()
+	{
+		return false;
+	}
+
+	public boolean regRead()
+	{
+		return false;
+	}
+
+	public boolean dispatch()
+	{
+		return false;
+	}
+
+	public boolean issue()
+	{
+		return false;
+	}
+
+	public boolean execute()
+	{
+		return false;
+	}
+
+	public boolean writeback()
+	{
+		return false;
+	}
+
+	public boolean retire()
+	{
+		return false;
 	}
 }
