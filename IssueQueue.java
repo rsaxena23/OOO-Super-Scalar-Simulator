@@ -80,5 +80,10 @@ public class IssueQueue
 		return result;
 	}
 
+	public boolean empty()
+	{
+		return entries.size()==0;
+	}
+
 
 }

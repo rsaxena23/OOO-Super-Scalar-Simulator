@@ -27,6 +27,7 @@ class SuperScalar
 		for(int i=0;i<renameTable.length;i++)
 			renameTable[i]=-1;	
 		wb = new ArrayList<Instruction>();
+		rt = new ArrayList<Instruction>();
 	}
 
 	public boolean fetch(ArrayList<Instruction> bundle)
@@ -99,7 +100,7 @@ class SuperScalar
 
 	public boolean issue()
 	{
-		if( ex.notFull() )
+		if( !iq.empty() && ex.notFull() )
 		{
 			int space = ex.space();
 			space = (space>width)?width:space;
@@ -182,7 +183,7 @@ class SuperScalar
 				instr.src1.isRob = true;
 			}
 
-			if(instr.src1.regNo>=0 && renameTable[instr.src2.regNo]!=-1)
+			if(instr.src2.regNo>=0 && renameTable[instr.src2.regNo]!=-1)
 			{
 				instr.src2.regName = "rob"+renameTable[instr.src2.regNo];
 				instr.src2.regNo = renameTable[instr.src2.regNo];

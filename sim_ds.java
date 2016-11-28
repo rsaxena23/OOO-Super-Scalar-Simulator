@@ -24,7 +24,6 @@ public class sim_ds
 			traceFile = args[5];
 			
 			SuperScalar superScalar = new SuperScalar(width, robSize, iqSize);
-			new Simulator(superScalar,traceFile).startSimulation();
-			
+			new Simulator(superScalar,traceFile).startSimulation();			
 		}
 }

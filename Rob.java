@@ -37,7 +37,7 @@ class Rob
 		
 		int space =  (tail>head)?(buffer.length - tail + head):(head-tail);
 		
-		if(space>counter)
+		if(space>counter || tail==head)
 			return true;
 
 		return false;
@@ -54,7 +54,8 @@ class Rob
 			buffer[tail].pcValue = instr.pcValue;
 			buffer[tail].instructionNo = Rob.instructionNo;
 
-			renameTable[instr.dst.regNo] = tail;
+			if( instr.dst.regNo!=-1 )
+				renameTable[instr.dst.regNo] = tail;
 
 			instr.dst.isRob = true;
 			instr.dst.regNo = tail;
