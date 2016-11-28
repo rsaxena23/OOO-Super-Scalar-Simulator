@@ -46,10 +46,11 @@ class ExecuteList
 				execCycles = 5;
 			else
 			{
+				execCycles=0;
 				System.out.println("Operation Type issue");
 			}
 
-			entries.append( new ExecEntry(instr,execCycles)  );
+			entries.add( new ExecEntry(instr,execCycles)  );
 		}
 	}
 
@@ -61,11 +62,11 @@ class ExecuteList
 	public ArrayList<Instruction> runInstructions()
 	{
 		ArrayList<Instruction> finishedBundle = new ArrayList<Instruction>();
-		for(Instruction instr:entries)
+		for(ExecEntry execEntry:entries)
 		{
-			instr.execCycles-=1;
-			if(instr.execCycles==-1)
-				finishedBundle.add(instr);
+			execEntry.execCycles-=1;
+			if(execEntry.execCycles==-1)
+				finishedBundle.add(execEntry.instruction);
 		}
 		return finishedBundle;
 	}

@@ -135,8 +135,8 @@ class SuperScalar
 			rob.buffer[instr.dst.regNo].ready = true;
 			if(rt.size()<width)
 			{
-				rt.add(instr)
-				wb.remove(index)
+				rt.add(instr);
+				wb.remove(index);
 			}
 			else
 				index++;
@@ -151,7 +151,7 @@ class SuperScalar
 	public boolean retire()
 	{
 		if(rob.head==rob.tail)			
-			return false
+			return false;
 
 		rob.retire(width);
 		return true;
@@ -195,7 +195,7 @@ class SuperScalar
 	{
 		for(Instruction instr:bundle)
 		{
-			Register dst = instr.dst
+			Register dst = instr.dst;
 			//Update IQ
 			updateDS(iq.entries,dst);
 			//Update DI
