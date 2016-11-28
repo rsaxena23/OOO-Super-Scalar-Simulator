@@ -3,12 +3,12 @@ import java.util.PriorityQueue;
 
 class IQEntry
 {
-	Register src1;
+	/*Register src1;
 	boolean src1Rdy;
 	Register src2;
-	boolean src2Rdy;
+	boolean src2Rdy; */
 	Instruction instruction;
-	public IQEntry(Instruction instruction, boolean src1Rdy, boolean src2Rdy)
+	/* public IQEntry(Instruction instruction, boolean src1Rdy, boolean src2Rdy)
 	{
 		this.src1 = instruction.src1;
 		this.src2 = instruction.src2;
@@ -16,16 +16,16 @@ class IQEntry
 		this.src1Rdy = src1Rdy;
 		this.src2Rdy = src2Rdy;
 		this.instruction = instruction;
-	}
+	}*/
 }
 
 public class IssueQueue
 {
-	ArrayList<IQEntry> entries;
+	ArrayList<Instruction> entries;
 	int maxSize;
 	public IssueQueue(int size)
 	{
-		this.entries = new ArrayList<IQEntry>();
+		this.entries = new ArrayList<Instruction>();
 		this.maxSize = size;
 	}
 
@@ -40,16 +40,43 @@ public class IssueQueue
 	{
 		for(Instruction instr:bundle)
 		{
-			boolean src1Rdy = true, src2Rdy = true;
+			boolean src1Rdy = instr.src1.regReady , src2Rdy = instr.src2.regReady;
 
-			if(instr.src1.isRob)
-				src1Rdy = rob[instr.src1.regNo].ready
-			if(instr.src2.isRob)
-				src2Rdy = rob[instr.src2.regNo].ready
+			if(!src1Rdy && instr.src1.isRob)
+			{
+				//src1Rdy = rob[instr.src1.regNo].ready;
+				instr.src1.regReady = rob[instr.src1.regNo].ready;
+			}
+			if(!src2Rdy && instr.src2.isRob)
+			{
+				//src2Rdy = rob[instr.src2.regNo].ready;
+				instr.src2.regReady = rob[instr.src2.regNo].ready;
+			}
 
-			IQEntry newEntry = new IQEntry(instr, src1Rdy, src2Rdy);
-			entries.append(newEntry);
+			//IQEntry newEntry = new IQEntry(instr, src1Rdy, src2Rdy);
+			entries.append(instr);
 		}
+	}
+
+	public ArrayList<Instruction> selectInstrBatch(int width)
+	{
+		int index = 0;
+		
+		ArrayList<Instruction> result = new ArrayList<Instruction>();
+		while(index<entries.size() && result.size()<width)
+		{
+			Instruction temp = entries.get(index);
+			if(temp.instruction.src1.regReady && temp.instruction.src2.regReady)
+			{
+				result.append(temp);
+				entries.remove(index);
+			}
+			else
+			{
+				index++;
+			}
+		}
+		return result;
 	}
 
 

@@ -1,8 +1,9 @@
 class Register
 {
 	String regName="";
-	int regNo;
+	int regNo=-1;
 	boolean isRob;
+	boolean regReady;
 
 	public Register(String regName, int regNo)
 	{
@@ -45,7 +46,7 @@ class Instruction
 
 	public void updateDuration(int key, int value)
 	{		
-		cycleDetails[key][1] = value - instruction.cycleDetails[key][0]; 
+		cycleDetails[key][1] = value - cycleDetails[key][0]; 
 		ipc+= cycleDetails[key][1];
 	}
 }

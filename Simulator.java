@@ -7,6 +7,7 @@ public class Simulator
 {
 	SuperScalar superScalar;
 	String tracefile;
+	
 	public Simulator(SuperScalar superScalar, String tracefile)
 	{
 		this.superScalar = superScalar;

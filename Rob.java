@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 class RobEntry
 {
 	boolean valueSet;
@@ -33,7 +35,7 @@ class Rob
 				counter++;
 		} */
 		
-		int space =  if(tail>head)?(buffer.length - tail + head):(head-tail);
+		int space =  (tail>head)?(buffer.length - tail + head):(head-tail);
 		
 		if(space>counter)
 			return true;
@@ -47,19 +49,19 @@ class Rob
 		for(Instruction instr:bundle)
 		{
 			//check for -1 case once
-			buffer[tail].destReg = bundle.regName;
-			buffer[tail].destRegNo = bundle.regNo;
-			buffer[tail].pcValue = bundle.pcValue;
+			buffer[tail].destReg = instr.dst.regName;
+			buffer[tail].destRegNo = instr.dst.regNo;
+			buffer[tail].pcValue = instr.pcValue;
 			buffer[tail].instructionNo = Rob.instructionNo;
 
-			renameTable[instr.regNo] = tail;
+			renameTable[instr.dst.regNo] = tail;
 
-			instr.isRob = true;
-			instr.regNo = tail;
-			instr.regName = "rob"+tail;			
+			instr.dst.isRob = true;
+			instr.dst.regNo = tail;
+			instr.dst.regName = "rob"+tail;			
 			
 			Rob.instructionNo++;
-			tail++;
+			tail =  (tail+1)%buffer.length;
 		}
 	}
 
