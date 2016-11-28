@@ -33,6 +33,7 @@ public class Simulator
 				superScalar.rename();
 				superScalar.decode();
 				*/
+				superScalar.nextCycle();
 
 				simStatus = superScalar.retire() | superScalar.writeback() | superScalar.execute()
 						  | superScalar.issue() | superScalar.dispatch() | superScalar.regRead()

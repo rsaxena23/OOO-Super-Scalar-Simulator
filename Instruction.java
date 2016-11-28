@@ -9,7 +9,7 @@ class Register
 		this.regName = regName;
 		this.regNo = regNo;
 	}
-	
+
 	public void updateValues(String regName, int regNo, boolean isRob)
 	{
 		this.regName = regName;
@@ -25,7 +25,9 @@ class Instruction
 	Register src1;
 	Register src2;
 	int opType;
-	int ipc=0;
+	int ipc=0; 
+	int cycleDetails[][];
+
 	public Instruction(String pcValue, Register dst, Register src1, Register src2, int opType)
 	{
 		this.pcValue = pcValue;
@@ -33,5 +35,17 @@ class Instruction
 		this.src1 = src1;
 		this.src2 = src2;
 		this.opType = opType;
+		cycleDetails = new int[Constants.NO_OF_STAGES][2];
+	}
+
+	public void updateEntryPoint(int key , int value)
+	{
+		cycleDetails[key][0] = value;
+	}
+
+	public void updateDuration(int key, int value)
+	{		
+		cycleDetails[key][1] = value - instruction.cycleDetails[key][0]; 
+		ipc+= cycleDetails[key][1];
 	}
 }
