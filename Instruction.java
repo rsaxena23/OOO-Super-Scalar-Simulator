@@ -3,7 +3,7 @@ class Register
 	String regName="";
 	int regNo=-1;
 	boolean isRob;
-	boolean regReady;
+	boolean regReady=true;
 
 	public Register(String regName, int regNo)
 	{
@@ -28,10 +28,7 @@ class Instruction
 	int opType;
 	int ipc=0; 
 	int cycleDetails[][];
-
-	public Instruction()
-	{		
-	}
+	int instructionNo;
 
 	public Instruction(String pcValue, Register dst, Register src1, Register src2, int opType)
 	{
@@ -52,5 +49,19 @@ class Instruction
 	{		
 		cycleDetails[key][1] = value - cycleDetails[key][0]; 
 		ipc+= cycleDetails[key][1];
+	}
+
+	public void printStagesInfo()
+	{
+		String stages[] = { "FE","DE","RN","RR","DI","IS","EX","WB","RT"};
+		System.out.println(""+instructionNo+" ");
+		for(int i=0;i<stages.length;i++)
+		{
+			System.out.print(stages[i]+"{"+cycleDetails[i][0]+","+cycleDetails[i][1]+"}, ");
+		}
+	}
+	public void printInfo()
+	{
+		System.out.println(instructionNo+" "+pcValue+" "+dst.regName+" "+src1.regName+","+src2.regName+" "+opType);
 	}
 }

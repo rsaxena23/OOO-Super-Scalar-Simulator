@@ -68,13 +68,12 @@ public class Simulator
 
 				simStatus= simStatus | fetchStatus;
 				System.out.print(simStatus+":fe ");
-				if(counter==5)
+				if(counter==35)
 					break;
 								
 				counter++;
-
-
-
+				if(!traceRead)
+					break;
 			}
 
 			System.out.println("Number of cycles:"+superScalar.cycleNumber);

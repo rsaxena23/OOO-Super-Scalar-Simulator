@@ -1,3 +1,6 @@
+import java.lang.reflect.Array;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.ArrayList;
 
@@ -16,7 +19,7 @@ class SuperScalar
 
 	ArrayList<Instruction> de, rn, rr, di, wb, rt;
 
-	public SuperScalar(int width, int iqSize,int robSize)
+	public SuperScalar(int width, int robSize,int iqSize)
 	{
 		this.width = width;
 		this.iq = new IssueQueue(iqSize);
@@ -32,10 +35,16 @@ class SuperScalar
 
 	public boolean fetch(ArrayList<Instruction> bundle)
 	{
-		if(de==null && bundle!=null)
+		if(bundle!=null)
 		{
-			de = bundle;
-			updateBundle(bundle, Constants.FE, Constants.FE);
+			if(de==null ) {
+				de = bundle;
+				updateBundle(bundle, Constants.FE, Constants.DE);
+			}
+			else
+			{
+				updateBundle(bundle, Constants.FE, Constants.FE);
+			}
 			return true;
 		}
 
@@ -44,11 +53,14 @@ class SuperScalar
 
 	public boolean decode()
 	{
-		if(rn==null && de!=null)
+		if(de!=null)
 		{
-			rn = de;
-			updateBundle(de, Constants.FE, Constants.DE);
-			de=null;
+			if(rn==null)
+			{
+				rn = de;
+				updateBundle(de, Constants.DE, Constants.RN);
+				de=null;
+			}
 			return true;
 		}
 
@@ -63,7 +75,7 @@ class SuperScalar
 			{
 				rob.tagRegisters(rn,renameTable);
 				modifySource(rn);
-				updateBundle(rn, Constants.DE, Constants.RN);
+				updateBundle(rn, Constants.RN, Constants.RR);
 				rr=rn;
 				rn=null;
 				return true;
@@ -77,7 +89,7 @@ class SuperScalar
 		if(rr!=null && di==null)
 		{
 			di = rr;
-			updateBundle(rr, Constants.RN, Constants.RR);
+			updateBundle(rr, Constants.RR, Constants.DI);
 			rr= null;
 			return true;
 		}
@@ -91,7 +103,7 @@ class SuperScalar
 			if(iq.canInsertBundle(di))
 			{
 				iq.insertBundle(di,rob);
-				updateBundle(di, Constants.RR, Constants.DI);
+				updateBundle(di, Constants.DI, Constants.IS);
 				return true;
 			}
 		}
@@ -105,8 +117,9 @@ class SuperScalar
 			int space = ex.space();
 			space = (space>width)?width:space;
 			ArrayList<Instruction> bundle = iq.selectBundle(space);
+			//System.out.println("Space:"+space+" , iqselectbatch:"+bundle.size()+" "+iq.entries.size());
 			ex.insertBundle(bundle);
-			updateBundle(bundle, Constants.DI, Constants.IS);
+			updateBundle(bundle, Constants.IS, Constants.EX);
 			return true;
 		}
 		return false;
@@ -130,6 +143,7 @@ class SuperScalar
 	public boolean writeback()
 	{
 		int index=0;
+		ArrayList<Instruction> tempBundle = new ArrayList<Instruction>();
 		while(index<wb.size())
 		{
 			Instruction instr = wb.get(index);
@@ -137,13 +151,16 @@ class SuperScalar
 			if(rt.size()<width)
 			{
 				rt.add(instr);
+				tempBundle.add(instr);
 				wb.remove(index);
 			}
 			else
 				index++;
 
-			if(index==wb.size())
+			if(index==wb.size()) {
+				updateBundle(tempBundle, Constants.WB,Constants.RT);
 				return true;
+			}
 		}
 
 		return false;
@@ -151,10 +168,10 @@ class SuperScalar
 
 	public boolean retire()
 	{
-		if(rob.head==rob.tail)			
+		if(rob.head==rob.tail || rt.size()==0)
 			return false;
-
-		rob.retire(width);
+		Collections.sort(rt, instructionSort());
+		rob.retire(width,rt);
 		return true;
 	}
 
@@ -175,7 +192,9 @@ class SuperScalar
 	public void modifySource(ArrayList<Instruction> bundle)
 	{
 		for(Instruction instr:bundle)
-		{			
+		{
+			System.out.println("Before RN:");
+			instr.printInfo();
 			if(instr.src1.regNo>=0 && renameTable[instr.src1.regNo]!=-1)
 			{
 				instr.src1.regName = "rob"+renameTable[instr.src1.regNo];
@@ -189,6 +208,8 @@ class SuperScalar
 				instr.src2.regNo = renameTable[instr.src2.regNo];
 				instr.src2.isRob = true;
 			}
+			System.out.println("After RN:");
+			instr.printInfo();
 		}
 	}
 
@@ -204,9 +225,7 @@ class SuperScalar
 			//Update RR
 			updateDS(rr,dst);
 			//Way to update Duration
-		//	instr.cycleDetails[Constants.EX][0] = instr.cycleDetails[Constants.IS][0] 
-		//										+ instr.cycleDetails[Constants.IS][1];
-		//	instr.cycleDetails[Constants.EX][1] = instr.
+			updateBundle(bundle,Constants.EX,Constants.WB);
 		}
 	}
 
@@ -220,6 +239,20 @@ class SuperScalar
 			if(instr.src2.regNo==dst.regNo && instr.src2.regName.equals(dst.regName))
 				instr.src2.regReady = true;
 		}
+	}
+
+	public static Comparator<Instruction> instructionSort()
+	{
+		Comparator comp = new Comparator<Instruction>() {
+			@Override
+			public int compare(Instruction x, Instruction y) {
+				if(x.instructionNo<y.instructionNo)
+					return 1;
+				else
+					return -1;
+			}
+		};
+		return comp;
 	}
 	
 }

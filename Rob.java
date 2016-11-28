@@ -59,20 +59,27 @@ class Rob
 
 			instr.dst.isRob = true;
 			instr.dst.regNo = tail;
-			instr.dst.regName = "rob"+tail;			
+			instr.dst.regName = "rob"+tail;
+			instr.dst.regReady = false;
+			instr.instructionNo = Rob.instructionNo;
 			
 			Rob.instructionNo++;
 			tail =  (tail+1)%buffer.length;
 		}
 	}
 
-	public int retire(int width)
+	public int retire(int width,ArrayList<Instruction> rt)
 	{
 		int counter=0;
 		for(int i=0;i<width && head!=tail && buffer[head].ready;i++)
 		{
+			Instruction instr = rt.get(0);
+			if(instr.instructionNo!=buffer[head].instructionNo)
+				break;
 			counter++;
 			head =  (head+1)%buffer.length;
+			instr.printStagesInfo();
+			rt.remove(0);
 		}
 		return counter;
 	}
