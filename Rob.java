@@ -65,4 +65,15 @@ class Rob
 		}
 	}
 
+	public int retire(int width)
+	{
+		int counter=0;
+		for(int i=0;i<width && head!=tail && buffer[head].ready;i++)
+		{
+			counter++;
+			head =  (head+1)%buffer.length;
+		}
+		return counter;
+	}
+
 }

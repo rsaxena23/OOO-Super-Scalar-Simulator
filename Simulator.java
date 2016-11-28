@@ -7,7 +7,7 @@ public class Simulator
 {
 	SuperScalar superScalar;
 	String tracefile;
-	
+
 	public Simulator(SuperScalar superScalar, String tracefile)
 	{
 		this.superScalar = superScalar;
@@ -60,6 +60,7 @@ public class Simulator
 
 
 			}
+			System.out.println("Number of cycles:"+superScalar.cycleNumber);
 
 		}catch(Exception e)
 		{

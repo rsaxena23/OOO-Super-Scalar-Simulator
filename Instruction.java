@@ -29,6 +29,10 @@ class Instruction
 	int ipc=0; 
 	int cycleDetails[][];
 
+	public Instruction()
+	{		
+	}
+
 	public Instruction(String pcValue, Register dst, Register src1, Register src2, int opType)
 	{
 		this.pcValue = pcValue;

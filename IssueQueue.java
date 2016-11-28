@@ -1,12 +1,12 @@
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
-class IQEntry
+/*class IQEntry
 {
-	/*Register src1;
+	Register src1;
 	boolean src1Rdy;
 	Register src2;
-	boolean src2Rdy; */
+	boolean src2Rdy; 
 	Instruction instruction;
 	/* public IQEntry(Instruction instruction, boolean src1Rdy, boolean src2Rdy)
 	{
@@ -16,13 +16,14 @@ class IQEntry
 		this.src1Rdy = src1Rdy;
 		this.src2Rdy = src2Rdy;
 		this.instruction = instruction;
-	}*/
-}
+	}
+}*/
 
 public class IssueQueue
 {
 	ArrayList<Instruction> entries;
 	int maxSize;
+
 	public IssueQueue(int size)
 	{
 		this.entries = new ArrayList<Instruction>();
@@ -45,20 +46,20 @@ public class IssueQueue
 			if(!src1Rdy && instr.src1.isRob)
 			{
 				//src1Rdy = rob[instr.src1.regNo].ready;
-				instr.src1.regReady = rob[instr.src1.regNo].ready;
+				instr.src1.regReady = rob.buffer[instr.src1.regNo].ready;
 			}
 			if(!src2Rdy && instr.src2.isRob)
 			{
 				//src2Rdy = rob[instr.src2.regNo].ready;
-				instr.src2.regReady = rob[instr.src2.regNo].ready;
+				instr.src2.regReady = rob.buffer[instr.src2.regNo].ready;
 			}
 
 			//IQEntry newEntry = new IQEntry(instr, src1Rdy, src2Rdy);
-			entries.append(instr);
+			entries.add(instr);
 		}
 	}
 
-	public ArrayList<Instruction> selectInstrBatch(int width)
+	public ArrayList<Instruction> selectBundle(int width)
 	{
 		int index = 0;
 		
@@ -66,9 +67,9 @@ public class IssueQueue
 		while(index<entries.size() && result.size()<width)
 		{
 			Instruction temp = entries.get(index);
-			if(temp.instruction.src1.regReady && temp.instruction.src2.regReady)
+			if(temp.src1.regReady && temp.src2.regReady)
 			{
-				result.append(temp);
+				result.add(temp);
 				entries.remove(index);
 			}
 			else
