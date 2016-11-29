@@ -23,7 +23,7 @@ public class sim_ds
 			p = Integer.parseInt(args[4]);
 			traceFile = args[5];
 			
-			SuperScalar superScalar = new SuperScalar(width, robSize, iqSize);
+			SuperScalar superScalar = new SuperScalar(width, robSize, iqSize, cacheSize, p);
 			new Simulator(superScalar,traceFile).startSimulation();			
 		}
 }

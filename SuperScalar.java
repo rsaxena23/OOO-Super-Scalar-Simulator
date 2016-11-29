@@ -12,6 +12,8 @@ class SuperScalar
 	int renameTable[];
 	static int cycleNumber=0;
 	ExecuteList ex;
+	int cacheSize;
+	int prefetch;
 
 	/*
 	Data Structures for cycle phases
@@ -19,11 +21,13 @@ class SuperScalar
 
 	ArrayList<Instruction> de, rn, rr, di, wb, rt;
 
-	public SuperScalar(int width, int robSize,int iqSize)
+	public SuperScalar(int width, int robSize,int iqSize,int cacheSize, int prefetch)
 	{
 		this.width = width;
 		this.iq = new IssueQueue(iqSize);
 		this.rob = new Rob(robSize);
+		this.cacheSize = cacheSize;
+		this.prefetch = prefetch;
 		ex = new ExecuteList(width*5);
 		renameTable = new int[67];
 
@@ -278,6 +282,18 @@ class SuperScalar
 	{
 		for(Instruction instr:bundle)
 			instr.printInfo();
+	}
+
+	public void printStats(String tracefile)
+	{
+		System.out.println("\n# === Simulator Command ========\n# ./sim_ds "+rob.buffer.length+" "+iq.entries.size()+" "+width+" "+cacheSize+" "+prefetch+" "+tracefile);
+		System.out.println("# === Processor Configuration ===\n# ROB_SIZE = "+rob.buffer.length+"\n# IQ_SIZE = "+iq.entries.size());
+		System.out.println("# WIDTH = "+width+"\n# CACHE_SIZE = "+cacheSize+"\n# PREFETCHING = "+prefetch);
+		System.out.println("# === Simulation Results =======");
+		System.out.println("# Dynamic Instruction Count = "+rob.instructionNo);
+		System.out.println("# Cycles = "+cycleNumber);
+		System.out.println("# Instruction Per Cycle (IPC) = "+(((float)rob.instructionNo)/cycleNumber));
+
 	}	
 	
 }

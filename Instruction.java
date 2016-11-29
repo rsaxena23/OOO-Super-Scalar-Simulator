@@ -73,9 +73,9 @@ class Instruction
 		for(int i=0;i<stages.length;i++)
 		{
 			if(i==0)
-				System.out.print(stages[i]+"{"+(cycleDetails[i][0]-1)+","+(cycleDetails[i][1]+1)+"}, ");
+				System.out.print(stages[i]+"{"+(cycleDetails[i][0]-1)+","+(cycleDetails[i][1]+1)+"} ");
 			else
-				System.out.print(stages[i]+"{"+cycleDetails[i][0]+","+cycleDetails[i][1]+"}, ");
+				System.out.print(stages[i]+"{"+cycleDetails[i][0]+","+cycleDetails[i][1]+"} ");
 		}
 		System.out.println();
 	}
