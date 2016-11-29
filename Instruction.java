@@ -17,6 +17,10 @@ class Register
 		this.regNo = regNo;
 		this.isRob = isRob;
 	}
+	public Register copy()
+	{
+		return new Register(this.regName, this.regNo);
+	}
 }
 
 class Instruction
@@ -25,6 +29,9 @@ class Instruction
 	Register dst;
 	Register src1;
 	Register src2;
+	Register orgSrc1;
+	Register orgSrc2;
+	Register orgDst;
 	int opType;
 	int ipc=0; 
 	int cycleDetails[][];
@@ -36,6 +43,9 @@ class Instruction
 		this.dst = dst;
 		this.src1 = src1;
 		this.src2 = src2;
+		this.orgDst = dst.copy();
+		this.orgSrc1 = src1.copy();
+		this.orgSrc2 = src2.copy();
 		this.opType = opType;
 		cycleDetails = new int[Constants.NO_OF_STAGES][2];
 		for(int i=0;i<Constants.NO_OF_STAGES;i++) {
@@ -59,15 +69,18 @@ class Instruction
 	public void printStagesInfo()
 	{
 		String stages[] = { "FE","DE","RN","RR","DI","IS","EX","WB","RT"};
-		System.out.print(""+instructionNo+" ");
+		System.out.print(""+(instructionNo-1)+" fu{"+opType+"} src{"+orgSrc1.regNo+","+orgSrc2.regNo+"} dst{"+orgDst.regNo+"} ");
 		for(int i=0;i<stages.length;i++)
 		{
-			System.out.print(stages[i]+"{"+cycleDetails[i][0]+","+cycleDetails[i][1]+"}, ");
+			if(i==0)
+				System.out.print(stages[i]+"{"+(cycleDetails[i][0]-1)+","+(cycleDetails[i][1]+1)+"}, ");
+			else
+				System.out.print(stages[i]+"{"+cycleDetails[i][0]+","+cycleDetails[i][1]+"}, ");
 		}
 		System.out.println();
 	}
 	public void printInfo()
 	{
-		System.out.println(instructionNo+" "+pcValue+" "+dst.regName+" "+src1.regName+"("+src1.regReady+"), "+src2.regName+"("+src2.regReady+") "+opType);
+		System.out.println((instructionNo-1)+" "+pcValue+" "+dst.regName+" "+src1.regName+"("+src1.regReady+"), "+src2.regName+"("+src2.regReady+") "+opType);
 	}
 }

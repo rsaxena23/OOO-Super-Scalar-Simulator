@@ -74,9 +74,8 @@ class SuperScalar
 			if(rr==null && rob.robNotFull(rn))
 			{
 				modifySource(rn);
-				rob.tagRegisters(rn,renameTable);
+				rob.tagRegisters(rn,renameTable);				
 				updateBundle(rn, Constants.RN, Constants.RR);
-
 				rr=rn;
 				rn=null;
 				return true;
@@ -84,7 +83,7 @@ class SuperScalar
 		}
 		return false;
 	}
-
+ 	
 	public boolean regRead()
 	{
 		if(rr!=null && di==null)
@@ -123,7 +122,7 @@ class SuperScalar
 			space = (space>width)?width:space;
 			ArrayList<Instruction> bundle = iq.selectBundle(space);
 //			System.out.println("Space:"+space+" , iqselectbatch:"+bundle.size()+" "+iq.entries.size());
-		//	iq.printInfo();
+			iq.printInfo();
 			ex.insertBundle(bundle);
 			updateBundle(bundle, Constants.IS, Constants.EX);
 			return true;
@@ -140,7 +139,7 @@ class SuperScalar
 			//System.out.println((finishedBundle.size()>0)?finishedBundle.get(0).instructionNo:-1);
 			for(Instruction instr:finishedBundle)			
 				wb.add(instr);
-		//	ex.printInfo();
+			ex.printInfo();
 
 			return true;
 		}
@@ -151,15 +150,20 @@ class SuperScalar
 	{
 		int index=0;
 		ArrayList<Instruction> tempBundle = new ArrayList<Instruction>();
-		//System.out.println("\nWriteBack:");
+		System.out.println("\nWriteBack:");
 		while(index<wb.size())
 		{
 			Instruction instr = wb.get(index);
-		//	instr.printInfo();
+			instr.printInfo();
 			rob.buffer[instr.dst.regNo].ready = true;
-			rt.add(instr);
-			tempBundle.add(instr);
-			wb.remove(index);
+			if(rt.size()<width*5)
+			{
+				rt.add(instr);
+				tempBundle.add(instr);
+				wb.remove(index);
+			}
+			else
+				index++;
 
 			if(index==wb.size()) {
 				updateBundle(tempBundle, Constants.WB,Constants.RT);
@@ -172,7 +176,7 @@ class SuperScalar
 
 	public boolean retire()
 	{
-		//System.out.println("\n-------Cycle Number:"+cycleNumber+"-----------");
+		System.out.println("\n-------Cycle Number:"+cycleNumber+"-----------");
 		if(rob.head==rob.tail || rt.size()==0)
 			return false;
 		Collections.sort(rt, instructionSort());
@@ -203,9 +207,9 @@ class SuperScalar
 	{
 		for(Instruction instr:bundle)
 		{
-			/*System.out.println("Cycle:"+cycleNumber);
-			System.out.print("\nBefore RN:");
-			instr.printInfo();*/
+			//System.out.println("Cycle:"+cycleNumber);
+			//System.out.print("\nBefore RN:");
+			//instr.printInfo();
 			if(instr.src1.regNo>=0 && renameTable[instr.src1.regNo]!=-1)
 			{
 				instr.src1.regName = "rob"+renameTable[instr.src1.regNo];
@@ -221,8 +225,8 @@ class SuperScalar
 				instr.src2.isRob = true;
 				instr.src2.regReady = rob.buffer[ instr.src2.regNo  ].ready;
 			}
-			/*System.out.print("\nAfter RN:");
-			instr.printInfo();*/
+			//System.out.print("\nAfter RN:");
+			//instr.printInfo();
 		}
 	}
 
@@ -269,5 +273,10 @@ class SuperScalar
 		};
 		return comp;
 	}
+
+	public void printBundle()
+	{
+		
+	}	
 	
 }

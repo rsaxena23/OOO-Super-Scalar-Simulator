@@ -17,7 +17,7 @@ class Rob
 	int tail = 3;
 	RobEntry buffer[];
 	static int instructionNo=1;
-	boolean full = false;
+	
 
 	public Rob(int robSize)
 	{
@@ -39,7 +39,7 @@ class Rob
 		
 		int space =  (tail>head)?(buffer.length - tail -1 + head):(head-tail);
 		
-		if(space>counter || (tail==head  && !full ))
+		if(space>counter || tail==head)
 			return true;
 
 		return false;
@@ -54,11 +54,16 @@ class Rob
 			buffer[tail].destReg = instr.dst.regName;
 			buffer[tail].destRegNo = instr.dst.regNo;
 			buffer[tail].pcValue = instr.pcValue;
-			buffer[tail].instructionNo = Rob.instructionNo;
+			buffer[tail].instructionNo = Rob.instructionNo;			
 			buffer[tail].ready = false;
 
 			if( instr.dst.regNo!=-1 )
+			{
+				//System.out.println(Rob.instructionNo+" RN dst:"+instr.dst.regNo+"="+tail);
 				renameTable[instr.dst.regNo] = tail;
+			}
+			else
+				buffer[tail].ready = true;
 
 			instr.dst.isRob = true;
 			instr.dst.regNo = tail;
@@ -68,8 +73,7 @@ class Rob
 			
 			Rob.instructionNo++;
 			tail =  (tail+1)%buffer.length;
-			if(tail==head)
-				full = true;
+			
 		}
 	}
 
@@ -80,13 +84,15 @@ class Rob
 		{
 			Instruction instr = rt.get(0);
 			if(instr.instructionNo!=buffer[head].instructionNo) {
-				//System.out.print("\nCan't Retire: "+buffer[head].instructionNo+" s:");
-				//instr.printInfo();
+				System.out.print("\nCan't Retire: "+buffer[head].instructionNo+" s:");
+				instr.printInfo();
 				break;
 			}
+
 			counter++;
-			if(renameTable[instr.dst.regNo]==head)
-				renameTable[buffer[head].destRegNo]=-1;
+
+			if( instr.orgDst.regNo!=-1 &&  renameTable[ instr.orgDst.regNo ] == head )
+				renameTable[ instr.orgDst.regNo ]=-1;
 			//resetHead();
 			head =  (head+1)%buffer.length;
 			instr.updateDuration(Constants.RT,cycleNumber);
