@@ -68,7 +68,7 @@ class Rob
 		}
 	}
 
-	public int retire(int width,ArrayList<Instruction> rt)
+	public int retire(int width,ArrayList<Instruction> rt, int cycleNumber)
 	{
 		int counter=0;
 		for(int i=0;i<width && head!=tail && buffer[head].ready;i++)
@@ -78,6 +78,7 @@ class Rob
 				break;
 			counter++;
 			head =  (head+1)%buffer.length;
+			instr.updateDuration(Constants.RT,cycleNumber);
 			instr.printStagesInfo();
 			rt.remove(0);
 		}

@@ -32,7 +32,7 @@ public class IssueQueue
 
 	public boolean canInsertBundle(ArrayList<Instruction> bundle)
 	{
-		if( bundle.size()<(maxSize - entries.size()) )
+		if( bundle.size()<=(maxSize - entries.size()) )
 			return true;
 		return false;
 	}

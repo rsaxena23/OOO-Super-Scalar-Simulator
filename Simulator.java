@@ -26,23 +26,23 @@ public class Simulator
 			while(simStatus)
 			{
 				superScalar.nextCycle();
-				System.out.println("");
+				//System.out.println("");
 				simStatus = superScalar.retire();
-				System.out.print(simStatus+":RT ");
+				//System.out.print(simStatus+":RT ");
 				simStatus = simStatus | superScalar.writeback();
-				System.out.print(simStatus+":WB ");
+				//System.out.print(simStatus+":WB ");
 				simStatus = simStatus | superScalar.execute();
-				System.out.print(simStatus+":ex ");
+				//System.out.print(simStatus+":ex ");
 				simStatus = simStatus | superScalar.issue();
-				System.out.print(simStatus+":is ");
+				//System.out.print(simStatus+":is ");
 				simStatus = simStatus | superScalar.dispatch();
-				System.out.print(simStatus+":di ");
+				//System.out.print(simStatus+":di ");
 				simStatus = simStatus | superScalar.regRead();
-				System.out.print(simStatus+":rr ");
+				//System.out.print(simStatus+":rr ");
 				simStatus = simStatus | superScalar.rename();
-				System.out.print(simStatus+":rn ");
+				//System.out.print(simStatus+":rn ");
 				simStatus = simStatus | superScalar.decode();
-				System.out.print(simStatus+":de ");
+				//System.out.print(simStatus+":de ");
 								
 
 				/*simStatus = superScalar.retire() | superScalar.writeback() | superScalar.execute()
@@ -57,8 +57,14 @@ public class Simulator
 					remember to consider end case whether null or 0 length Arraylist
 					*/
 					bundle = getBundle(br, superScalar.width);
-					if(bundle.size()==0)
-						traceRead=false;
+					if(bundle.size()==0) {
+						traceRead = false;
+						bundle=null;
+					}
+					else
+					{
+						superScalar.updateBundle(bundle, -1, Constants.FE);
+					}
 				}
 
 				boolean fetchStatus = superScalar.fetch(bundle);
@@ -67,13 +73,13 @@ public class Simulator
 					bundle = null;
 
 				simStatus= simStatus | fetchStatus;
-				System.out.print(simStatus+":fe ");
-				if(counter==35)
-					break;
+				//System.out.print(simStatus+":fe ");
+				//if(counter==100)
+				//	break;
 								
 				counter++;
-				if(!traceRead)
-					break;
+				//if(!traceRead)
+				//	break;
 			}
 
 			System.out.println("Number of cycles:"+superScalar.cycleNumber);

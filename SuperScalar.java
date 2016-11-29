@@ -10,7 +10,7 @@ class SuperScalar
 	IssueQueue iq;
 	Rob rob;
 	int renameTable[];
-	static int cycleNumber=0;
+	static int cycleNumber=-1;
 	ExecuteList ex;
 
 	/*
@@ -43,7 +43,7 @@ class SuperScalar
 			}
 			else
 			{
-				updateBundle(bundle, Constants.FE, Constants.FE);
+				updateBundle(bundle, -1, Constants.FE);
 			}
 			return true;
 		}
@@ -102,8 +102,10 @@ class SuperScalar
 		{
 			if(iq.canInsertBundle(di))
 			{
-				iq.insertBundle(di,rob);
+				System.out.println("Cycle:!"+cycleNumber);
 				updateBundle(di, Constants.DI, Constants.IS);
+				iq.insertBundle(di,rob);
+				di=null;
 				return true;
 			}
 		}
@@ -117,7 +119,7 @@ class SuperScalar
 			int space = ex.space();
 			space = (space>width)?width:space;
 			ArrayList<Instruction> bundle = iq.selectBundle(space);
-			//System.out.println("Space:"+space+" , iqselectbatch:"+bundle.size()+" "+iq.entries.size());
+//			System.out.println("Space:"+space+" , iqselectbatch:"+bundle.size()+" "+iq.entries.size());
 			ex.insertBundle(bundle);
 			updateBundle(bundle, Constants.IS, Constants.EX);
 			return true;
@@ -131,7 +133,7 @@ class SuperScalar
 		{
 			ArrayList<Instruction> finishedBundle = ex.runInstructions();
 			updateStages(finishedBundle);
-			
+			//System.out.println((finishedBundle.size()>0)?finishedBundle.get(0).instructionNo:-1);
 			for(Instruction instr:finishedBundle)			
 				wb.add(instr);			
 
@@ -171,7 +173,8 @@ class SuperScalar
 		if(rob.head==rob.tail || rt.size()==0)
 			return false;
 		Collections.sort(rt, instructionSort());
-		rob.retire(width,rt);
+		System.out.println("RTsize:"+rt.size());
+		rob.retire(width,rt,cycleNumber);
 		return true;
 	}
 
@@ -184,8 +187,11 @@ class SuperScalar
 	{
 		for(Instruction temp:bundle)
 		{
-			temp.updateEntryPoint(currCycle,cycleNumber);
-			temp.updateDuration(prevCycle,cycleNumber);
+			if(currCycle!=-1)
+				temp.updateEntryPoint(currCycle,cycleNumber);
+
+			if(prevCycle!=-1)
+				temp.updateDuration(prevCycle,cycleNumber);
 		}
 	}
 
@@ -193,8 +199,9 @@ class SuperScalar
 	{
 		for(Instruction instr:bundle)
 		{
-			System.out.println("Before RN:");
-			instr.printInfo();
+			/*System.out.println("Cycle:"+cycleNumber);
+			System.out.print("\nBefore RN:");
+			instr.printInfo();*/
 			if(instr.src1.regNo>=0 && renameTable[instr.src1.regNo]!=-1)
 			{
 				instr.src1.regName = "rob"+renameTable[instr.src1.regNo];
@@ -208,8 +215,8 @@ class SuperScalar
 				instr.src2.regNo = renameTable[instr.src2.regNo];
 				instr.src2.isRob = true;
 			}
-			System.out.println("After RN:");
-			instr.printInfo();
+			/*System.out.print("\nAfter RN:");
+			instr.printInfo();*/
 		}
 	}
 

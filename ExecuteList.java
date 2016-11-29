@@ -65,7 +65,7 @@ class ExecuteList
 		for(ExecEntry execEntry:entries)
 		{
 			execEntry.execCycles-=1;
-			if(execEntry.execCycles==-1)
+			if(execEntry.execCycles==0)
 				finishedBundle.add(execEntry.instruction);
 		}
 		return finishedBundle;
