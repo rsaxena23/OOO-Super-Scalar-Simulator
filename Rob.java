@@ -82,19 +82,19 @@ class Rob
 	public int retire(int width,ArrayList<Instruction> rt, int cycleNumber, int renameTable[])
 	{
 		int counter=0;
-		for(int i=0;i<width && (head!=tail || full ) && buffer[head].ready;i++)
+		for(int i=0;i<width && (head!=tail || full ) && buffer[head].ready && i<rt.size();i++)
 		{
 			Instruction instr = rt.get(0);
 			if(instr.instructionNo!=buffer[head].instructionNo) {
-				System.out.print("\nCan't Retire: "+(buffer[head].instructionNo-1)+" h:"+head+" t:"+tail+" s:");
+			/*	System.out.print("\nCan't Retire: "+(buffer[head].instructionNo-1)+" h:"+head+" t:"+tail+" s:");
 				instr.printInfo();
 				printRow(head);
 				printRow(head-1);
-				printRow(head+1);
+				printRow(head+1); */
 				break;
 			}
 
-			System.out.println("Head: "+head+" Tail:"+tail);
+			//System.out.println("Head: "+head+" Tail:"+tail);
 
 			counter++;
 
