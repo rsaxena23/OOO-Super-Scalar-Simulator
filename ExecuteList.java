@@ -61,12 +61,18 @@ class ExecuteList
 
 	public ArrayList<Instruction> runInstructions()
 	{
+		int index=0;
 		ArrayList<Instruction> finishedBundle = new ArrayList<Instruction>();
-		for(ExecEntry execEntry:entries)
+		while(index<entries.size())
 		{
+			ExecEntry execEntry = entries.get(index);
 			execEntry.execCycles-=1;
-			if(execEntry.execCycles==0)
+			if(execEntry.execCycles==0) {
 				finishedBundle.add(execEntry.instruction);
+				entries.remove(index);
+			}
+			else
+				index++;
 		}
 		return finishedBundle;
 	}

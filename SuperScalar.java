@@ -10,7 +10,7 @@ class SuperScalar
 	IssueQueue iq;
 	Rob rob;
 	int renameTable[];
-	static int cycleNumber=-1;
+	static int cycleNumber=0;
 	ExecuteList ex;
 
 	/*
@@ -40,12 +40,12 @@ class SuperScalar
 			if(de==null ) {
 				de = bundle;
 				updateBundle(bundle, Constants.FE, Constants.DE);
+				return true;
 			}
 			else
 			{
 				updateBundle(bundle, -1, Constants.FE);
 			}
-			return true;
 		}
 
 		return false;
@@ -73,8 +73,8 @@ class SuperScalar
 		{
 			if(rr==null && rob.robNotFull(rn))
 			{
-				rob.tagRegisters(rn,renameTable);
 				modifySource(rn);
+				rob.tagRegisters(rn,renameTable);
 				updateBundle(rn, Constants.RN, Constants.RR);
 				rr=rn;
 				rn=null;
@@ -88,6 +88,7 @@ class SuperScalar
 	{
 		if(rr!=null && di==null)
 		{
+			rob.lookup(rr);
 			di = rr;
 			updateBundle(rr, Constants.RR, Constants.DI);
 			rr= null;
@@ -102,7 +103,8 @@ class SuperScalar
 		{
 			if(iq.canInsertBundle(di))
 			{
-				System.out.println("Cycle:!"+cycleNumber);
+			//	System.out.println("Cycle:!"+cycleNumber);
+			//	di.get(0).printInfo();
 				updateBundle(di, Constants.DI, Constants.IS);
 				iq.insertBundle(di,rob);
 				di=null;
@@ -120,10 +122,14 @@ class SuperScalar
 			space = (space>width)?width:space;
 			ArrayList<Instruction> bundle = iq.selectBundle(space);
 //			System.out.println("Space:"+space+" , iqselectbatch:"+bundle.size()+" "+iq.entries.size());
+			System.out.println("Cycle Number:"+cycleNumber+" iqSize:"+iq.entries.size());
+			iq.printInfo();
 			ex.insertBundle(bundle);
 			updateBundle(bundle, Constants.IS, Constants.EX);
 			return true;
 		}
+		System.out.println("Cycle Number:"+cycleNumber+" iqSize:"+iq.entries.size());
+		iq.printInfo();
 		return false;
 	}
 
@@ -173,8 +179,9 @@ class SuperScalar
 		if(rob.head==rob.tail || rt.size()==0)
 			return false;
 		Collections.sort(rt, instructionSort());
-		System.out.println("RTsize:"+rt.size());
-		rob.retire(width,rt,cycleNumber);
+		//rt.get(0).printInfo();
+		//rob.printRow(rob.head);
+		rob.retire(width,rt,cycleNumber,renameTable);
 		return true;
 	}
 

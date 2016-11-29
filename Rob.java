@@ -1,3 +1,4 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 class RobEntry
@@ -68,21 +69,47 @@ class Rob
 		}
 	}
 
-	public int retire(int width,ArrayList<Instruction> rt, int cycleNumber)
+	public int retire(int width,ArrayList<Instruction> rt, int cycleNumber, int renameTable[])
 	{
 		int counter=0;
 		for(int i=0;i<width && head!=tail && buffer[head].ready;i++)
 		{
 			Instruction instr = rt.get(0);
-			if(instr.instructionNo!=buffer[head].instructionNo)
+			if(instr.instructionNo!=buffer[head].instructionNo) {
+				System.out.print("\nCan't Retire: "+buffer[head].instructionNo+" ");
+				instr.printInfo();
 				break;
+			}
 			counter++;
+			if(renameTable[instr.dst.regNo]==head)
+				renameTable[buffer[head].destRegNo]=-1;
 			head =  (head+1)%buffer.length;
 			instr.updateDuration(Constants.RT,cycleNumber);
-			instr.printStagesInfo();
+
+		//	instr.printStagesInfo();
 			rt.remove(0);
 		}
 		return counter;
+	}
+
+	public void lookup(ArrayList<Instruction> bundle)
+	{
+		for(Instruction instr:bundle)
+		{
+			if(instr.src1.isRob)
+			{
+				instr.src1.regReady = buffer[instr.src1.regNo].ready;
+			}
+			if(instr.src1.isRob)
+			{
+				instr.src1.regReady = buffer[instr.src1.regNo].ready;
+			}
+		}
+	}
+
+	public void printRow(int rowNo)
+	{
+		System.out.println(rowNo+": dst"+buffer[rowNo].destReg+" rdy:"+buffer[rowNo].ready+" i:"+buffer[rowNo].instructionNo);
 	}
 
 }

@@ -85,5 +85,10 @@ public class IssueQueue
 		return entries.size()==0;
 	}
 
-
+	public void printInfo()
+	{
+		System.out.println("IQ Contents:");
+		for(Instruction instr:entries)
+			instr.printInfo();
+	}
 }
