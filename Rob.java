@@ -17,7 +17,7 @@ class Rob
 	int tail = 3;
 	RobEntry buffer[];
 	static int instructionNo=1;
-	
+	boolean full = false;
 
 	public Rob(int robSize)
 	{
@@ -37,9 +37,9 @@ class Rob
 				counter++;
 		} */
 		
-		int space =  (tail>head)?(buffer.length - tail -1 + head):(head-tail);
+		int space =  (tail>head)?(buffer.length - tail + head):(head-tail);
 		
-		if(space>counter || tail==head)
+		if(space>=counter || (tail==head && !full ) )
 			return true;
 
 		return false;
@@ -73,21 +73,28 @@ class Rob
 			
 			Rob.instructionNo++;
 			tail =  (tail+1)%buffer.length;
-			
+			if(tail==head)
+				full=true;
+
 		}
 	}
 
 	public int retire(int width,ArrayList<Instruction> rt, int cycleNumber, int renameTable[])
 	{
 		int counter=0;
-		for(int i=0;i<width && head!=tail && buffer[head].ready;i++)
+		for(int i=0;i<width && (head!=tail || full ) && buffer[head].ready;i++)
 		{
 			Instruction instr = rt.get(0);
 			if(instr.instructionNo!=buffer[head].instructionNo) {
-				System.out.print("\nCan't Retire: "+(buffer[head].instructionNo-1)+" s:");
+				System.out.print("\nCan't Retire: "+(buffer[head].instructionNo-1)+" h:"+head+" t:"+tail+" s:");
 				instr.printInfo();
+				printRow(head);
+				printRow(head-1);
+				printRow(head+1);
 				break;
 			}
+
+			System.out.println("Head: "+head+" Tail:"+tail);
 
 			counter++;
 
@@ -99,6 +106,8 @@ class Rob
 
 			instr.printStagesInfo();
 			rt.remove(0);
+			if(head!=tail)
+				full=false;
 		}
 		return counter;
 	}
