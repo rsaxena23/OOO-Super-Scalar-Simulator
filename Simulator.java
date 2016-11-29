@@ -81,8 +81,9 @@ public class Simulator
 				//if(!traceRead)
 				//	break;
 			}
+			superScalar.printStats();
 
-			System.out.println("Number of cycles:"+superScalar.cycleNumber+" "+superScalar.ex.entries.size());
+			//System.out.println("Number of cycles:"+superScalar.cycleNumber+" "+superScalar.ex.entries.size());
 
 		}catch(Exception e)
 		{

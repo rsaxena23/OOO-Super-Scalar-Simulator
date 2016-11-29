@@ -122,7 +122,7 @@ class SuperScalar
 			space = (space>width)?width:space;
 			ArrayList<Instruction> bundle = iq.selectBundle(space);
 //			System.out.println("Space:"+space+" , iqselectbatch:"+bundle.size()+" "+iq.entries.size());
-			iq.printInfo();
+//			iq.printInfo();
 			ex.insertBundle(bundle);
 			updateBundle(bundle, Constants.IS, Constants.EX);
 			return true;
@@ -139,7 +139,7 @@ class SuperScalar
 			//System.out.println((finishedBundle.size()>0)?finishedBundle.get(0).instructionNo:-1);
 			for(Instruction instr:finishedBundle)			
 				wb.add(instr);
-			ex.printInfo();
+//			ex.printInfo();
 
 			return true;
 		}
@@ -150,20 +150,18 @@ class SuperScalar
 	{
 		int index=0;
 		ArrayList<Instruction> tempBundle = new ArrayList<Instruction>();
-		System.out.println("\nWriteBack:");
+//		System.out.println("\nWriteBack:");
+		Collections.sort(wb, instructionSort());
 		while(index<wb.size())
 		{
 			Instruction instr = wb.get(index);
-			instr.printInfo();
+//			instr.printInfo();
 			rob.buffer[instr.dst.regNo].ready = true;
-			if(rt.size()<width*5)
-			{
+			
 				rt.add(instr);
 				tempBundle.add(instr);
 				wb.remove(index);
-			}
-			else
-				index++;
+			
 
 			if(index==wb.size()) {
 				updateBundle(tempBundle, Constants.WB,Constants.RT);
@@ -176,12 +174,14 @@ class SuperScalar
 
 	public boolean retire()
 	{
-		System.out.println("\n-------Cycle Number:"+cycleNumber+"-----------");
+//		System.out.println("\n-------Cycle Number:"+cycleNumber+"-----------");
 		if(rob.head==rob.tail || rt.size()==0)
 			return false;
 		Collections.sort(rt, instructionSort());
 		//rt.get(0).printInfo();
 		//rob.printRow(rob.head);
+//		System.out.println("RT:");
+//		printBundle(rt);
 		rob.retire(width,rt,cycleNumber,renameTable);
 		return true;
 	}
@@ -274,9 +274,10 @@ class SuperScalar
 		return comp;
 	}
 
-	public void printBundle()
+	public void printBundle(ArrayList<Instruction> bundle)
 	{
-		
+		for(Instruction instr:bundle)
+			instr.printInfo();
 	}	
 	
 }

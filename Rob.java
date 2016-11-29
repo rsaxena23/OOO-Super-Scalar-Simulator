@@ -84,7 +84,7 @@ class Rob
 		{
 			Instruction instr = rt.get(0);
 			if(instr.instructionNo!=buffer[head].instructionNo) {
-				System.out.print("\nCan't Retire: "+buffer[head].instructionNo+" s:");
+				System.out.print("\nCan't Retire: "+(buffer[head].instructionNo-1)+" s:");
 				instr.printInfo();
 				break;
 			}
