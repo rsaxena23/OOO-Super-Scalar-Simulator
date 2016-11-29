@@ -316,13 +316,14 @@ class SuperScalar
 
 	public void printStats(String tracefile)
 	{
-		System.out.println("# === Simulator Command ========\n# ./sim_ds "+rob.buffer.length+" "+iq.maxSize+" "+width+" "+cacheSize+" "+prefetch+" "+tracefile);
+		System.out.println("# === Simulator Command =========\n# ./sim_ds "+rob.buffer.length+" "+iq.maxSize+" "+width+" "+cacheSize+" "+prefetch+" "+tracefile);
 		System.out.println("# === Processor Configuration ===\n# ROB_SIZE = "+rob.buffer.length+"\n# IQ_SIZE = "+iq.maxSize);
 		System.out.println("# WIDTH = "+width+"\n# CACHE_SIZE = "+cacheSize+"\n# PREFETCHING = "+prefetch);
-		System.out.println("# === Simulation Results =======");
-		System.out.println("# Dynamic Instruction Count = "+rob.instructionNo);
-		System.out.println("# Cycles = "+cycleNumber);
-		System.out.println("# Instruction Per Cycle (IPC) = "+(((float)rob.instructionNo)/cycleNumber));
+		System.out.println("# === Simulation Results ========");
+		System.out.println("# Dynamic Instruction Count = "+(rob.instructionNo-1));
+		System.out.println("# Cycles = "+(cycleNumber-1));
+		double ipc = Math.round(((float)rob.instructionNo)/cycleNumber*100)/100.0;
+		System.out.println("# Instructions Per Cycle (IPC) = "+ipc);
 
 	}	
 	
