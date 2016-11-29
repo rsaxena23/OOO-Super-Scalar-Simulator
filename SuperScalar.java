@@ -14,6 +14,7 @@ class SuperScalar
 	ExecuteList ex;
 	int cacheSize;
 	int prefetch;
+	boolean debug=false;
 
 	/*
 	Data Structures for cycle phases
@@ -61,8 +62,11 @@ class SuperScalar
 		{
 			if(rn==null)
 			{
-		//		System.out.println("DE");
-		//		printBundle(de);
+				if(debug)
+				{
+					System.out.println("DE");
+					printBundle(de);
+				}
 				rn = de;
 				updateBundle(de, Constants.DE, Constants.RN);
 				de=null;
@@ -77,8 +81,11 @@ class SuperScalar
 	{
 		if( rn!=null )
 		{
-		//	System.out.println("RN  rob:"+(rob.robNotFull(rn)));
-		//	printBundle(rn);
+			if(debug)
+			{
+				System.out.println("RN  rob:"+(rob.robNotFull(rn)));
+				printBundle(rn);
+			}
 			if(rr==null && rob.robNotFull(rn))
 			{
 				modifySource(rn);
@@ -96,8 +103,11 @@ class SuperScalar
 	{
 		if(rr!=null && di==null)
 		{
-		//	System.out.println("RR");
-		//	printBundle(rr);
+			if(debug)
+			{
+				System.out.println("RR");
+				printBundle(rr);
+			}
 			rob.lookup(rr);
 			di = rr;
 			updateBundle(rr, Constants.RR, Constants.DI);
@@ -115,8 +125,11 @@ class SuperScalar
 			{
 			//	System.out.println("Cycle:!"+cycleNumber);
 			//	di.get(0).printInfo();
-			//	System.out.println("DI:");
-			//	printBundle(di);
+				if(debug)
+				{
+					System.out.println("DI:");
+					printBundle(di);
+				}
 				updateBundle(di, Constants.DI, Constants.IS);
 				iq.insertBundle(di,rob);
 				di=null;
@@ -132,7 +145,8 @@ class SuperScalar
 		{
 			int space = ex.space();
 			space = (space>width)?width:space;
-		//	iq.printInfo();
+			if(debug)
+				iq.printInfo();
 			ArrayList<Instruction> bundle = iq.selectBundle(space);
 //			System.out.println("Space:"+space+" , iqselectbatch:"+bundle.size()+" "+iq.entries.size());			
 			ex.insertBundle(bundle);
@@ -146,7 +160,8 @@ class SuperScalar
 	{
 		if(ex.notEmpty())
 		{
-		//	ex.printInfo();
+			if(debug)
+				ex.printInfo();
 			ArrayList<Instruction> finishedBundle = ex.runInstructions();
 			updateStages(finishedBundle);
 			//System.out.println((finishedBundle.size()>0)?finishedBundle.get(0).instructionNo:-1);
@@ -162,12 +177,14 @@ class SuperScalar
 	{
 		int index=0;
 		ArrayList<Instruction> tempBundle = new ArrayList<Instruction>();
-		//System.out.println("\nWriteBack:");
+		if(debug)
+			System.out.println("\nWriteBack:");
 		Collections.sort(wb, instructionSort());
 		while(index<wb.size())
 		{
 			Instruction instr = wb.get(index);
-		//	instr.printInfo();
+			if(debug)		
+				instr.printInfo();
 			rob.buffer[instr.dst.regNo].ready = true;
 			
 				rt.add(instr);
@@ -186,14 +203,18 @@ class SuperScalar
 
 	public boolean retire()
 	{
-		//System.out.println("\n-------Cycle Number:"+cycleNumber+"-----------");
+		if(debug)
+			System.out.println("\n-------Cycle Number:"+cycleNumber+"-----------");
 		if(rt.size()==0)
 			return false;
 		Collections.sort(rt, instructionSort());
 		//rt.get(0).printInfo();
 		//rob.printRow(rob.head);
-		//System.out.println("RT:");
-		//printBundle(rt);
+		if(debug)
+		{
+			System.out.println("RT:");
+			printBundle(rt);
+		}
 		rob.retire(width,rt,cycleNumber,renameTable);
 		return true;
 	}
@@ -295,7 +316,7 @@ class SuperScalar
 
 	public void printStats(String tracefile)
 	{
-		System.out.println("\n# === Simulator Command ========\n# ./sim_ds "+rob.buffer.length+" "+iq.maxSize+" "+width+" "+cacheSize+" "+prefetch+" "+tracefile);
+		System.out.println("# === Simulator Command ========\n# ./sim_ds "+rob.buffer.length+" "+iq.maxSize+" "+width+" "+cacheSize+" "+prefetch+" "+tracefile);
 		System.out.println("# === Processor Configuration ===\n# ROB_SIZE = "+rob.buffer.length+"\n# IQ_SIZE = "+iq.maxSize);
 		System.out.println("# WIDTH = "+width+"\n# CACHE_SIZE = "+cacheSize+"\n# PREFETCHING = "+prefetch);
 		System.out.println("# === Simulation Results =======");

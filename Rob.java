@@ -82,7 +82,7 @@ class Rob
 	public int retire(int width,ArrayList<Instruction> rt, int cycleNumber, int renameTable[])
 	{
 		int counter=0;
-		for(int i=0;i<width && (head!=tail || full ) && buffer[head].ready && i<rt.size();i++)
+		for(int i=0;i<width && (head!=tail || full ) && buffer[head].ready && i<rt.size();)
 		{
 			Instruction instr = rt.get(0);
 			if(instr.instructionNo!=buffer[head].instructionNo) {
