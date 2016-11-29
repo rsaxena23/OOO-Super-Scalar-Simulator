@@ -74,7 +74,7 @@ public class Simulator
 
 				simStatus= simStatus | fetchStatus;
 				//System.out.print(simStatus+":fe ");
-				//if(counter==80)
+				//if(counter==40)
 				//	break;
 								
 				counter++;

@@ -45,11 +45,11 @@ class Rob
 		return false;
 	}
 
-	public void tagRegisters(ArrayList<Instruction> bundle, int renameTable[])
+	public void tagRegisters(Instruction instr, int renameTable[])
 	{
 		
-		for(Instruction instr:bundle)
-		{
+		//for(Instruction instr:bundle)
+		//{
 			//check for -1 case once
 			buffer[tail].destReg = instr.dst.regName;
 			buffer[tail].destRegNo = instr.dst.regNo;
@@ -76,7 +76,7 @@ class Rob
 			if(tail==head)
 				full=true;
 
-		}
+		//}
 	}
 
 	public int retire(int width,ArrayList<Instruction> rt, int cycleNumber, int renameTable[])
@@ -120,9 +120,9 @@ class Rob
 			{
 				instr.src1.regReady = buffer[instr.src1.regNo].ready;
 			}
-			if(instr.src1.isRob)
+			if(instr.src2.isRob)
 			{
-				instr.src1.regReady = buffer[instr.src1.regNo].ready;
+				instr.src2.regReady = buffer[instr.src2.regNo].ready;
 			}
 		}
 	}
