@@ -76,6 +76,7 @@ class SuperScalar
 				modifySource(rn);
 				rob.tagRegisters(rn,renameTable);
 				updateBundle(rn, Constants.RN, Constants.RR);
+
 				rr=rn;
 				rn=null;
 				return true;
@@ -122,14 +123,11 @@ class SuperScalar
 			space = (space>width)?width:space;
 			ArrayList<Instruction> bundle = iq.selectBundle(space);
 //			System.out.println("Space:"+space+" , iqselectbatch:"+bundle.size()+" "+iq.entries.size());
-			System.out.println("Cycle Number:"+cycleNumber+" iqSize:"+iq.entries.size());
 			iq.printInfo();
 			ex.insertBundle(bundle);
 			updateBundle(bundle, Constants.IS, Constants.EX);
 			return true;
 		}
-		System.out.println("Cycle Number:"+cycleNumber+" iqSize:"+iq.entries.size());
-		iq.printInfo();
 		return false;
 	}
 
@@ -141,7 +139,8 @@ class SuperScalar
 			updateStages(finishedBundle);
 			//System.out.println((finishedBundle.size()>0)?finishedBundle.get(0).instructionNo:-1);
 			for(Instruction instr:finishedBundle)			
-				wb.add(instr);			
+				wb.add(instr);
+			ex.printInfo();
 
 			return true;
 		}
@@ -152,18 +151,15 @@ class SuperScalar
 	{
 		int index=0;
 		ArrayList<Instruction> tempBundle = new ArrayList<Instruction>();
+		System.out.println("\nWriteBack:");
 		while(index<wb.size())
 		{
 			Instruction instr = wb.get(index);
+			instr.printInfo();
 			rob.buffer[instr.dst.regNo].ready = true;
-			if(rt.size()<width)
-			{
-				rt.add(instr);
-				tempBundle.add(instr);
-				wb.remove(index);
-			}
-			else
-				index++;
+			rt.add(instr);
+			tempBundle.add(instr);
+			wb.remove(index);
 
 			if(index==wb.size()) {
 				updateBundle(tempBundle, Constants.WB,Constants.RT);
@@ -176,6 +172,7 @@ class SuperScalar
 
 	public boolean retire()
 	{
+		System.out.println("\n-------Cycle Number:"+cycleNumber+"-----------");
 		if(rob.head==rob.tail || rt.size()==0)
 			return false;
 		Collections.sort(rt, instructionSort());
@@ -214,6 +211,7 @@ class SuperScalar
 				instr.src1.regName = "rob"+renameTable[instr.src1.regNo];
 				instr.src1.regNo = renameTable[instr.src1.regNo];
 				instr.src1.isRob = true;
+				instr.src1.regReady = rob.buffer[ instr.src1.regNo ].ready;
 			}
 
 			if(instr.src2.regNo>=0 && renameTable[instr.src2.regNo]!=-1)
@@ -221,6 +219,7 @@ class SuperScalar
 				instr.src2.regName = "rob"+renameTable[instr.src2.regNo];
 				instr.src2.regNo = renameTable[instr.src2.regNo];
 				instr.src2.isRob = true;
+				instr.src2.regReady = rob.buffer[ instr.src2.regNo  ].ready;
 			}
 			/*System.out.print("\nAfter RN:");
 			instr.printInfo();*/
@@ -245,6 +244,8 @@ class SuperScalar
 
 	public void updateDS(ArrayList<Instruction> entries, Register dst)
 	{
+		if(entries==null)
+			return;
 		for(Instruction instr:entries)
 		{
 			if(instr.src1.regNo==dst.regNo && instr.src1.regName.equals(dst.regName))
@@ -260,7 +261,7 @@ class SuperScalar
 		Comparator comp = new Comparator<Instruction>() {
 			@Override
 			public int compare(Instruction x, Instruction y) {
-				if(x.instructionNo<y.instructionNo)
+				if(x.instructionNo>y.instructionNo)
 					return 1;
 				else
 					return -1;

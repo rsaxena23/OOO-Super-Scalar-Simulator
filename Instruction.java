@@ -68,6 +68,6 @@ class Instruction
 	}
 	public void printInfo()
 	{
-		System.out.println(instructionNo+" "+pcValue+" "+dst.regName+" "+src1.regName+","+src2.regName+" "+opType);
+		System.out.println(instructionNo+" "+pcValue+" "+dst.regName+" "+src1.regName+"("+src1.regReady+"), "+src2.regName+"("+src2.regReady+") "+opType);
 	}
 }

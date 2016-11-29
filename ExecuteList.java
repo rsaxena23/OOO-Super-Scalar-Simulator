@@ -76,5 +76,14 @@ class ExecuteList
 		}
 		return finishedBundle;
 	}
+	public void printInfo()
+	{
+		System.out.println("\nExecute List");
+		for(ExecEntry execEntry:entries)
+		{
+			System.out.print("cycles:"+execEntry.execCycles+"  instr:");
+			execEntry.instruction.printInfo();
+		}
+	}
 	
 }

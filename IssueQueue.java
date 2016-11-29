@@ -87,7 +87,7 @@ public class IssueQueue
 
 	public void printInfo()
 	{
-		System.out.println("IQ Contents:");
+		System.out.println("\nIQ Contents:");
 		for(Instruction instr:entries)
 			instr.printInfo();
 	}

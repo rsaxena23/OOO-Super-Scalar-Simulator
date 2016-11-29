@@ -36,7 +36,7 @@ class Rob
 				counter++;
 		} */
 		
-		int space =  (tail>head)?(buffer.length - tail + head):(head-tail);
+		int space =  (tail>head)?(buffer.length - tail -1 + head):(head-tail);
 		
 		if(space>counter || tail==head)
 			return true;
@@ -76,7 +76,7 @@ class Rob
 		{
 			Instruction instr = rt.get(0);
 			if(instr.instructionNo!=buffer[head].instructionNo) {
-				System.out.print("\nCan't Retire: "+buffer[head].instructionNo+" ");
+				System.out.print("\nCan't Retire: "+buffer[head].instructionNo+" s:");
 				instr.printInfo();
 				break;
 			}
@@ -86,7 +86,7 @@ class Rob
 			head =  (head+1)%buffer.length;
 			instr.updateDuration(Constants.RT,cycleNumber);
 
-		//	instr.printStagesInfo();
+			instr.printStagesInfo();
 			rt.remove(0);
 		}
 		return counter;
